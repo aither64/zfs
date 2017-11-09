@@ -443,6 +443,18 @@ acl_inherit_changed_cb(void *arg, uint64_t newval)
 	((zfsvfs_t *)arg)->z_acl_inherit = newval;
 }
 
+static void
+uid_offset_changed_cb(void *arg, uint64_t newval)
+{
+	((zfsvfs_t *)arg)->z_uid_offset = (uint_t)newval;
+}
+
+static void
+gid_offset_changed_cb(void *arg, uint64_t newval)
+{
+	((zfsvfs_t *)arg)->z_gid_offset = (uint_t)newval;
+}
+
 static int
 zfs_register_callbacks(vfs_t *vfsp)
 {
@@ -498,6 +510,12 @@ zfs_register_callbacks(vfs_t *vfsp)
 	    zfs_prop_to_name(ZFS_PROP_ACLTYPE), acltype_changed_cb, zfsvfs);
 	error = error ? error : dsl_prop_register(ds,
 	    zfs_prop_to_name(ZFS_PROP_ACLINHERIT), acl_inherit_changed_cb,
+	    zfsvfs);
+	error = error ? error : dsl_prop_register(ds,
+	    zfs_prop_to_name(ZFS_PROP_UIDOFFSET), uid_offset_changed_cb,
+	    zfsvfs);
+	error = error ? error : dsl_prop_register(ds,
+	    zfs_prop_to_name(ZFS_PROP_GIDOFFSET), gid_offset_changed_cb,
 	    zfsvfs);
 	error = error ? error : dsl_prop_register(ds,
 	    zfs_prop_to_name(ZFS_PROP_VSCAN), vscan_changed_cb, zfsvfs);
@@ -942,6 +960,14 @@ zfsvfs_init(zfsvfs_t *zfsvfs, objset_t *os)
 	if ((error = zfs_get_zplprop(os, ZFS_PROP_ACLTYPE, &val)) != 0)
 		return (error);
 	zfsvfs->z_acl_type = (uint_t)val;
+
+	if ((error = zfs_get_zplprop(os, ZFS_PROP_UIDOFFSET, &val)) != 0)
+		return (error);
+	zfsvfs->z_uid_offset = (uint_t)val;
+
+	if ((error = zfs_get_zplprop(os, ZFS_PROP_GIDOFFSET, &val)) != 0)
+		return (error);
+	zfsvfs->z_gid_offset = (uint_t)val;
 
 	/*
 	 * Fold case on file systems that are always or sometimes case
@@ -2081,6 +2107,8 @@ zfs_get_zplprop(objset_t *os, zfs_prop_t prop, uint64_t *value)
 			break;
 		case ZFS_PROP_NORMALIZE:
 		case ZFS_PROP_UTF8ONLY:
+		case ZFS_PROP_UIDOFFSET:
+		case ZFS_PROP_GIDOFFSET:
 			*value = 0;
 			break;
 		case ZFS_PROP_CASE:

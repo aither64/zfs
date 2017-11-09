@@ -531,6 +531,12 @@ zfs_prop_init(void)
 	zprop_register_number(ZFS_PROP_RECORDSIZE, "recordsize",
 	    SPA_OLD_MAXBLOCKSIZE, PROP_INHERIT,
 	    ZFS_TYPE_FILESYSTEM, "512 to 1M, power of 2", "RECSIZE");
+	zprop_register_number(ZFS_PROP_UIDOFFSET, "uidoffset",
+	    0, PROP_INHERIT, ZFS_TYPE_FILESYSTEM,
+	    "<offset> | none", "UIDOFFSET");
+	zprop_register_number(ZFS_PROP_GIDOFFSET, "gidoffset",
+	    0, PROP_INHERIT, ZFS_TYPE_FILESYSTEM,
+	    "<offset> | none", "GIDOFFSET");
 
 	/* hidden properties */
 	zprop_register_hidden(ZFS_PROP_NUMCLONES, "numclones", PROP_TYPE_NUMBER,

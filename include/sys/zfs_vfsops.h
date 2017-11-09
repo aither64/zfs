@@ -126,6 +126,8 @@ struct zfsvfs {
 	uint64_t	z_hold_size;	/* znode hold array size */
 	avl_tree_t	*z_hold_trees;	/* znode hold trees */
 	kmutex_t	*z_hold_locks;	/* znode hold locks */
+	uint_t          z_uid_offset;
+	uint_t          z_gid_offset;
 };
 
 #define	ZSB_XATTR	0x0001		/* Enable user xattrs */

@@ -1443,6 +1443,35 @@ badlabel:
 			chosen_normal = (int)intval;
 			break;
 
+		case ZFS_PROP_UIDOFFSET:
+		case ZFS_PROP_GIDOFFSET:
+		{
+			int mounted;
+
+			if (intval > UINT32_MAX) {
+				zfs_error_aux(hdl, dgettext(TEXT_DOMAIN,
+				    "'%s' must be in range from 0 to %ld"),
+				    propname, UINT32_MAX);
+				(void) zfs_error(hdl, EZFS_BADPROP, errbuf);
+				goto error;
+			}
+
+			if (zhp == NULL)
+				break;
+
+			mounted = zfs_prop_get_int(zhp, ZFS_PROP_MOUNTED);
+
+			if (mounted) {
+				zfs_error_aux(hdl, dgettext(TEXT_DOMAIN,
+				    "'%s' cannot be changed while the file "
+				    "system is mounted"), propname);
+				(void) zfs_error(hdl, EZFS_BADPROP, errbuf);
+				goto error;
+			}
+
+			break;
+		}
+
 		default:
 			break;
 		}
@@ -2763,6 +2792,8 @@ zfs_prop_get(zfs_handle_t *zhp, zfs_prop_t prop, char *propbuf, size_t proplen,
 
 	case ZFS_PROP_GUID:
 	case ZFS_PROP_CREATETXG:
+	case ZFS_PROP_UIDOFFSET:
+	case ZFS_PROP_GIDOFFSET:
 		/*
 		 * GUIDs are stored as numbers, but they are identifiers.
 		 * We don't want them to be pretty printed, because pretty
