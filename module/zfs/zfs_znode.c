@@ -617,10 +617,8 @@ zfs_znode_alloc(zfsvfs_t *zfsvfs, dmu_buf_t *db, int blksz,
 	ip->i_blkbits = SPA_MINBLOCKSHIFT;
 	set_nlink(ip, (uint32_t)links);
 
-	zfs_uid_write(ip, z_uid >= zfsvfs->z_uid_offset ?
-            z_uid : z_uid + zfsvfs->z_uid_offset);
-	zfs_gid_write(ip, z_gid >= zfsvfs->z_gid_offset ?
-            z_gid : z_gid + zfsvfs->z_gid_offset);
+	zfs_uid_write(ip, z_uid + zfsvfs->z_uid_offset);
+	zfs_gid_write(ip, z_gid + zfsvfs->z_gid_offset);
 	zfs_set_inode_flags(zp, ip);
 
 	/* Cache the xattr parent id */

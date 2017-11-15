@@ -58,6 +58,7 @@ SUBDIRS = \
 	threadsappend \
 	tmpfile \
 	truncate \
+	uidgid_offsets \
 	upgrade \
 	userquota \
 	vdev_zaps \
